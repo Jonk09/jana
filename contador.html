@@ -145,7 +145,6 @@
       background: #a855f7;
     }
 
-    /* ❤️ Corações caindo */
     .heart {
       position: fixed;
       top: -50px;
@@ -168,9 +167,13 @@
 <body>
   <h1>Há quanto tempo estamos juntos?</h1>
 
-  <img id="foto-casal" src="foto9.jpg" alt="Foto do casal" />
+  <img id="foto-casal" src="foto8.jpg" alt="Foto do casal" />
 
   <div id="contador">
+    <div class="tempo-box">
+      <div id="anos" class="numero">0</div>
+      <div class="label">Anos <span>🎉</span></div>
+    </div>
     <div class="tempo-box">
       <div id="dias" class="numero">0</div>
       <div class="label">Dias <span>📅</span></div>
@@ -192,8 +195,9 @@
   <button class="voltar" onclick="window.location.href='inicio.html'">⬅️ Voltar ao Menu</button>
 
   <script>
-    const dataInicio = new Date('2025-02-01T15:00:00');
+    const dataInicio = new Date('2023-09-11T20:00:00');
 
+    const anosEl = document.getElementById('anos');
     const diasEl = document.getElementById('dias');
     const horasEl = document.getElementById('horas');
     const minutosEl = document.getElementById('minutos');
@@ -201,19 +205,26 @@
 
     function atualizarContador() {
       const agora = new Date();
-      const diff = agora - dataInicio;
+      const anos = agora.getFullYear() - dataInicio.getFullYear();
+      const aniversarioEsteAno = new Date(agora.getFullYear(), dataInicio.getMonth(), dataInicio.getDate(), dataInicio.getHours(), dataInicio.getMinutes());
+      const anosCorrigidos = agora < aniversarioEsteAno ? anos - 1 : anos;
 
-      const segundos = Math.floor((diff / 1000) % 60);
-      const minutos = Math.floor((diff / (1000 * 60)) % 60);
-      const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const dataAniversarioCorrigida = new Date(dataInicio);
+      dataAniversarioCorrigida.setFullYear(dataInicio.getFullYear() + anosCorrigidos);
 
+      const diffRestante = agora - dataAniversarioCorrigida;
+      const dias = Math.floor(diffRestante / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diffRestante / (1000 * 60 * 60)) % 24);
+      const minutos = Math.floor((diffRestante / (1000 * 60)) % 60);
+      const segundos = Math.floor((diffRestante / 1000) % 60);
+
+      anosEl.textContent = anosCorrigidos;
       diasEl.textContent = dias;
       horasEl.textContent = horas.toString().padStart(2, '0');
       minutosEl.textContent = minutos.toString().padStart(2, '0');
       segundosEl.textContent = segundos.toString().padStart(2, '0');
 
-      [diasEl, horasEl, minutosEl, segundosEl].forEach(el => {
+      [anosEl, diasEl, horasEl, minutosEl, segundosEl].forEach(el => {
         el.style.animation = 'none';
         el.offsetHeight;
         el.style.animation = null;
@@ -223,7 +234,6 @@
     atualizarContador();
     setInterval(atualizarContador, 1000);
 
-    // 💜 Corações caindo
     function criarCoracao() {
       const heart = document.createElement("div");
       heart.classList.add("heart");
